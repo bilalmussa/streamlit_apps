@@ -30,7 +30,7 @@ row0_spacer1, row0_1, row0_spacer2, row0_2, row0_spacer3 = st.beta_columns(
 
 row0_1.title('Analyse your customer data')
 #row0_1.write('')
-row0_2.subheader('https://www.linkedin.com/in/bilalmussa/ ')
+row0_2.text('https://www.linkedin.com/in/bilalmussa/ ')
 
 row1_spacer1, row1_1, row1_spacer2 = st.beta_columns((.1, 3.2, .1))
 

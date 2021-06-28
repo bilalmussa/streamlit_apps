@@ -35,7 +35,7 @@ row0_2.write('https://www.linkedin.com/in/bilalmussa/ ')
 row1_spacer1, row1_1, row1_spacer2 = st.beta_columns((.1, 3.2, .1))
 
 with row1_1:
-    st.markdown("Hi, welcome to my quick analysis app - you only need 4 columns of data to profile your customers. The purpose of this app is to give you a quick overview into your customer data using the fewest columns. This app does not store any data. It simply reads it in, does the analysis and outputs the results")
+    st.markdown("Hi, welcome to my quick analysis app - you only need 4 columns of data to profile your customers using your transactional data. This app does not store any data. It simply reads it in, does the analysis and outputs the results")
 
 row2_spacer1, row2_1, row2_spacer2 = st.beta_columns((.1, 3.2, .1))
 with row2_1:

@@ -67,9 +67,6 @@ row4_spacer1, row4_1, row4_spacer2 = st.beta_columns((.1, 3.2, .1))
 with row4_1:
     user_input = st.file_uploader("Upload CSV",type=['csv'])
 
-if not user_input:
-        user_input = "C:\\Users\\bmussa\\Desktop\\Personal\\CB\\BI\BI.csv"
-
 row5_spacer1, row5_1, row5_spacer2 = st.beta_columns((.1, 3.2, .1))
 with row5_1:
     # Create a text element and let the reader know the data is loading.

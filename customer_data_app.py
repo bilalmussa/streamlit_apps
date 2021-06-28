@@ -17,6 +17,12 @@ from matplotlib.figure import Figure
 import base64
 from io import BytesIO
 
+def get_table_download_link_csv(df, message):
+    csv = df.to_csv(index=False).encode('utf-8-sig')
+    b64 = base64.b64encode(csv).decode()
+    href = f'<a href="data:file/csv;base64,{b64}" download="'+ df.name +'.csv" target="_blank">' + message +'</a>'
+    return href
+
 st.set_page_config(layout="wide")
 
 matplotlib.use("agg")
@@ -35,11 +41,16 @@ row0_2.subheader('https://www.linkedin.com/in/bilalmussa/ ')
 row1_spacer1, row1_1, row1_spacer2 = st.beta_columns((.1, 3.2, .1))
 
 with row1_1:
-    st.markdown("Hi, welcome to my quick analysis app - you only need 4 columns of data to profile your customers using your transactional data. This app does not store any data. It simply reads it in, does the analysis and outputs the results")
-
+    st.markdown("Hello, this is Bilal, and welcome to my Quick Analysis app. We just need 4 columns from your transactional data, and the app will automaically profile your customers and wll display various statistics and charts for your analysis.")
+    st.markdown("")
+    st.markdown("The system reads the data, analyses it, and displays the results. No data is stored during the process.")
+ 
 row2_spacer1, row2_1, row2_spacer2 = st.beta_columns((.1, 3.2, .1))
 with row2_1:
-    st.write('Your data needs to look like the below - The columns names must be the same and the date format must be DD/MM/YYYY')
+    st.write("""We accept the data in a CSV format with the following column headers:
+             - OrderDateTime: Date and Time of the rder in DD/MM/YYYY format
+             - CustomerID: Unique ID of the customer
+             - OrderID: Unique ID of the order""")
 
 example_dict = {'OrderDateTime': ['31/05/2021','29/05/2021','05/05/2021'],
                 'ItemCost': [5.6,7.7,10],
@@ -48,10 +59,12 @@ example_dict = {'OrderDateTime': ['31/05/2021','29/05/2021','05/05/2021'],
                 }
 
 example_data = pd.DataFrame(example_dict)
+example_data.name = 'example_data'
 
 row3_spacer1, row3_1, row3_spacer2 = st.beta_columns((.1, 3.2, .1))
 with row3_1:
     example_data 
+    st.markdown(get_table_download_link_csv(example_data,"Click here to download a sample CSV template"), unsafe_allow_html=True)
 
 @st.cache
 def tidy_data(data):
@@ -67,16 +80,15 @@ row4_spacer1, row4_1, row4_spacer2 = st.beta_columns((.1, 3.2, .1))
 with row4_1:
     user_input = st.file_uploader("Upload CSV",type=['csv'])
 
+if not user_input:
+    user_input = "https://github.com/bilalmussa/streamlit_customer_data/blob/main/example.csv"
+
 row5_spacer1, row5_1, row5_spacer2 = st.beta_columns((.1, 3.2, .1))
 with row5_1:
     # Create a text element and let the reader know the data is loading.
-    data_load_state = st.text('Loading data...')
-    trans_data = tidy_data(pd.read_csv(user_input,parse_dates=['OrderDateTime'], dayfirst=True))
-    if st.checkbox('Show raw data'):
-        st.subheader('Raw data')
-        st.write(trans_data)
-        
-        # Notify the reader that the data was successfully loaded.
+    data_load_state = st.text('Waiting to load data...')
+    trans_data = tidy_data(pd.read_csv(user_input,sep=",",parse_dates=['OrderDateTime'], dayfirst=True))        
+    # Notify the reader that the data was successfully loaded.
     data_load_state.text('Loading data...done!')
 
 #get max date from data series
@@ -86,7 +98,10 @@ last_year_1 = (datetime.strptime(str(trans_data['OrderDate'].max()),"%Y-%m-%d")+
 
 row6_spacer1, row6_1, row6_spacer2 = st.beta_columns((.1, 3.2, .1))
 with row6_1:
-    if st.checkbox('Would you like to view some stats?'):
+    if st.checkbox('View Raw Data'):
+        st.subheader('Raw data')
+        st.write(trans_data)
+    if st.checkbox('View Statistics'):
         st.subheader('Data stats')
         st.write('Max date in this data is:', max_date, )
         st.write('You have :', len(trans_data), 'many records' )
@@ -275,7 +290,7 @@ with row8_1, _lock:
     data_cut['ATV']= data_cut['Total Spend']/data_cut['Total Orders']
     
     data_cut
-if st.checkbox('Would you like to see the charts?'):
+if st.checkbox('View Charts'):
     st.header('Below are charts of each metric by the selected dimension')
     row9_spacer1, row9_1, row9_2, row9_spacer2 = st.beta_columns((.1, 3.2,3.2, 0.1))
     with row9_1, _lock:
@@ -392,10 +407,7 @@ with row13_1:
 
 
 #%% download file
-def get_table_download_link_csv(df):
-    csv = df.to_csv(index=False).encode('utf-8-sig')
-    b64 = base64.b64encode(csv).decode()
-    href = f'<a href="data:file/csv;base64,{b64}" download="agg_data.csv" target="_blank">Download aggregated data as a csv file</a>'
-    return href
 
-st.markdown(get_table_download_link_csv(agg_data), unsafe_allow_html=True)
+agg_data.name = 'agg_data'
+
+st.markdown(get_table_download_link_csv(agg_data,"Download aggregated data as a csv file"), unsafe_allow_html=True)

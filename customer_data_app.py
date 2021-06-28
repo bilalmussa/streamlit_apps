@@ -42,15 +42,15 @@ row1_spacer1, row1_1, row1_spacer2 = st.beta_columns((.1, 3.2, .1))
 
 with row1_1:
     st.markdown("Hello, this is Bilal, and welcome to my Quick Analysis app. We just need 4 columns from your transactional data, and the app will automaically profile your customers and wll display various statistics and charts for your analysis.")
-    st.markdown("")
     st.markdown("The system reads the data, analyses it, and displays the results. No data is stored during the process.")
  
 row2_spacer1, row2_1, row2_spacer2 = st.beta_columns((.1, 3.2, .1))
 with row2_1:
-    st.write("""We accept the data in a CSV format with the following column headers:
-             - OrderDateTime: Date and Time of the rder in DD/MM/YYYY format
-             - CustomerID: Unique ID of the customer
-             - OrderID: Unique ID of the order""")
+    st.write("We accept the data in a CSV format with the following column headers:")
+    st.write("- OrderDateTime: Date and Time of the order in DD/MM/YYYY format")
+    st.write("- ItemCost: Cost of the transaction in a float format")
+    st.write("- CustomerID: Unique ID of the customer - can be email address or customer key")
+    st.write("- OrderID: Unique ID of the order - can be text or numeric or mixed")
 
 example_dict = {'OrderDateTime': ['31/05/2021','29/05/2021','05/05/2021'],
                 'ItemCost': [5.6,7.7,10],
@@ -63,8 +63,10 @@ example_data.name = 'example_data'
 
 row3_spacer1, row3_1, row3_spacer2 = st.beta_columns((.1, 3.2, .1))
 with row3_1:
-    example_data 
+    example_data
     st.markdown(get_table_download_link_csv(example_data,"Click here to download a sample CSV template"), unsafe_allow_html=True)
+    st.markdown("The app is preloaded with the above example data")
+
 
 @st.cache
 def tidy_data(data):
@@ -80,16 +82,16 @@ row4_spacer1, row4_1, row4_spacer2 = st.beta_columns((.1, 3.2, .1))
 with row4_1:
     user_input = st.file_uploader("Upload CSV",type=['csv'])
 
-if not user_input:
-    user_input = "https://github.com/bilalmussa/streamlit_customer_data/blob/main/example.csv"
-
 row5_spacer1, row5_1, row5_spacer2 = st.beta_columns((.1, 3.2, .1))
 with row5_1:
     # Create a text element and let the reader know the data is loading.
-    data_load_state = st.text('Waiting to load data...')
-    trans_data = tidy_data(pd.read_csv(user_input,sep=",",parse_dates=['OrderDateTime'], dayfirst=True))        
-    # Notify the reader that the data was successfully loaded.
-    data_load_state.text('Loading data...done!')
+    if not user_input:
+        trans_data = tidy_data(example_data)
+    else:
+        data_load_state = st.text('Waiting to load data...')
+        trans_data = tidy_data(pd.read_csv(user_input,parse_dates=['OrderDateTime'], dayfirst=True))        
+        # Notify the reader that the data was successfully loaded.
+        data_load_state.text('Loading data...done!')
 
 #get max date from data series
 max_date = trans_data['OrderDate'].max()
@@ -103,11 +105,7 @@ with row6_1:
         st.write(trans_data)
     if st.checkbox('View Statistics'):
         st.subheader('Data stats')
-        st.write('Max date in this data is:', max_date, )
-        st.write('You have :', len(trans_data), 'many records' )
-        st.write('You have :', trans_data['CustomerID'].nunique(), 'many unique customers' )
-            
-        st.subheader('Below is a summary of the data - item cost field only')
+        st.write('There are ', len(trans_data), ' records in the data where you have ', trans_data['CustomerID'].nunique(), ' customers. The latest order date is', max_date, 'Below is a summary of the data - item cost field only.')
         data_description = trans_data['ItemCost'].agg(['count','mean', 'sum', 'min', 'max','median']).reset_index()
         st.write(data_description)
 
@@ -263,33 +261,31 @@ agg_data = data_calcs(trans_data)
 #st.pyplot(fig)
 
 row7_spacer1, row7_1,row7_spacer2 = st.beta_columns((.1, 3.2, .1))
-with row7_1:
-    option = st.selectbox(
-     'Which field would you like to cut the data by?',
-     ('LoyaltyBand', 'TotalSpendBand', 'CustStatus','Last12mSpendBand','AvgTimepOrderBand','ATVBand'))
-    st.write('You selected:', option)
-
-row8_spacer1, row8_1, row8_spacer2 = st.beta_columns((.1, 3.2, 0.1))
-with row8_1, _lock:
-    data_cut = agg_data[agg_data['CustomerID']!=0]
-    data_cut = agg_data.groupby([option]).agg({'CustomerID': ['count']
-                                               ,'TotalSpend': ['sum']
-                                               ,'TotalOrders': ['sum']
-                                               ,'Spend12m': ['sum']
-                                               }).sort_index().reset_index()
-    data_cut.columns = [option
-                        , 'Counts'
-                        ,'Total Spend'
-                        , 'Total Orders'
-                        , 'Total Spend Last12m'
-                        ]
-
-    data_cut['Avg Spend']= data_cut['Total Spend']/data_cut['Counts']
-    data_cut['Avg Orders']= data_cut['Total Orders']/data_cut['Counts']
-    data_cut['Avg Spend Last12m']= data_cut['Total Spend Last12m']/data_cut['Counts']
-    data_cut['ATV']= data_cut['Total Spend']/data_cut['Total Orders']
+with row7_1, _lock:
+    if st.checkbox('View Data Cuts'):
+        option = st.selectbox(
+         'Which field would you like to cut the data by?',
+         ('LoyaltyBand', 'TotalSpendBand', 'CustStatus','Last12mSpendBand','AvgTimepOrderBand','ATVBand'))
+        st.write('You selected:', option)
+        data_cut = agg_data[agg_data['CustomerID']!=0]
+        data_cut = agg_data.groupby([option]).agg({'CustomerID': ['count']
+                                                   ,'TotalSpend': ['sum']
+                                                   ,'TotalOrders': ['sum']
+                                                   ,'Spend12m': ['sum']
+                                                   }).sort_index().reset_index()
+        data_cut.columns = [option
+                            , 'Counts'
+                            ,'Total Spend'
+                            , 'Total Orders'
+                            , 'Total Spend Last12m'
+                            ]
     
-    data_cut
+        data_cut['Avg Spend']= data_cut['Total Spend']/data_cut['Counts']
+        data_cut['Avg Orders']= data_cut['Total Orders']/data_cut['Counts']
+        data_cut['Avg Spend Last12m']= data_cut['Total Spend Last12m']/data_cut['Counts']
+        data_cut['ATV']= data_cut['Total Spend']/data_cut['Total Orders']
+        data_cut
+        
 if st.checkbox('View Charts'):
     st.header('Below are charts of each metric by the selected dimension')
     row9_spacer1, row9_1, row9_2, row9_spacer2 = st.beta_columns((.1, 3.2,3.2, 0.1))
@@ -401,7 +397,7 @@ if st.checkbox('View Charts'):
 
 row13_spacer1, row13_1, row13_spacer2 = st.beta_columns((0.1, 3.2, .1))
 with row13_1:
-    if st.checkbox('Show final aggregated dataset'):
+    if st.checkbox('View Aggregated Data Set'):
         st.subheader('Aggregated data')
         st.write(agg_data)
 

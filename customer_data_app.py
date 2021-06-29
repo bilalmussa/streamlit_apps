@@ -285,7 +285,7 @@ with row7_1, _lock:
         data_cut['Avg Orders']= data_cut['Total Orders']/data_cut['Counts']
         data_cut['Avg Spend Last12m']= data_cut['Total Spend Last12m']/data_cut['Counts']
         data_cut['ATV']= data_cut['Total Spend']/data_cut['Total Orders']
-        data_cut
+        data_cut.round(2)
         
 if st.checkbox('View Charts'):
     st.header('Below are charts of each metric by the selected dimension')

@@ -16,6 +16,7 @@ import matplotlib
 from matplotlib.figure import Figure
 import base64
 from io import BytesIO
+import smtplib
 
 def get_table_download_link_csv(df, message):
     csv = df.to_csv(index=False).encode('utf-8-sig')
@@ -407,3 +408,41 @@ with row13_1:
 agg_data.name = 'agg_data'
 
 st.markdown(get_table_download_link_csv(agg_data,"Download aggregated data as a csv file"), unsafe_allow_html=True)
+
+#%% send your details over
+st.subheader("Let's connect and talk about data")
+with st.form(key='my_form'):
+    text_input = st.text_input(label='Enter your name')
+    text_input2 = st.text_input(label='Enter your email address')
+    submit_button = st.form_submit_button(label='Submit')
+    
+    if submit_button==1 and text_input=="" and text_input2=="":
+        st.write('Please enter your name & email address')
+    elif submit_button==1 and text_input=="":
+        st.write('Please enter your name')
+    elif submit_button==1 and text_input2=="":
+        st.write('Please enter your email address') 
+    
+    if submit_button==1 and text_input!="" and text_input2!="":
+        fromaddr = text_input2
+        toaddrs  = 'bilalmussa@gmail.com'
+        msg = 'You have a new enquiry'
+        username = 'bilalmussa@gmail.com'
+        password = 'nncnzmveutupexbn'
+        msg = "\r\n".join([
+          "From:"+ fromaddr +","
+          "To: bilalmussa@gmail.com",
+          "Subject: New enquiry from: " + fromaddr,
+          "",
+          "Name: " + text_input ,
+          "",
+          "Email: " + text_input2
+          ])
+        server = smtplib.SMTP('smtp.gmail.com:587')
+        server.ehlo()
+        server.starttls()
+        server.login(username,password)
+        server.sendmail(fromaddr, toaddrs, msg)
+        server.quit()
+    
+    

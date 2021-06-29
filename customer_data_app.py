@@ -445,5 +445,5 @@ with st.form(key='my_form'):
         server.sendmail(fromaddr, toaddrs, msg)
         server.quit()
         st.write('Thank you for your email. I will be in touch.')
-        text_input=""
-        text_input2=""
+        text_input=st.text_input(label='Enter your name')
+        text_input2=st.text_input(label='Enter your email address')

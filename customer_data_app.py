@@ -444,3 +444,6 @@ with st.form(key='my_form'):
         server.login(username,password)
         server.sendmail(fromaddr, toaddrs, msg)
         server.quit()
+        st.write('Thank you for your email. I will be in touch.')
+        text_input=""
+        text_input2=""

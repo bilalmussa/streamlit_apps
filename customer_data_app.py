@@ -42,7 +42,7 @@ row0_2.subheader('https://www.linkedin.com/in/bilalmussa/ ')
 row1_spacer1, row1_1, row1_spacer2 = st.beta_columns((.1, 3.2, .1))
 
 with row1_1:
-    st.markdown("Hello, this is Bilal, and welcome to my Quick Analysis app. We just need 4 columns from your transactional data for the (ideally) the last 3 years, and the app will automaically profile your customers and will display various statistics and charts for your analysis.")
+    st.markdown("Hello, this is Bilal, and welcome to my Quick Analysis app. We just need 4 columns from your transactional data for (ideally) the last 3 years, and the app will automaically profile your customers and will display various statistics and charts for your analysis.")
     st.markdown("The system reads the data, analyses it, and displays the results. No data is stored during the process.")
  
 row2_spacer1, row2_1, row2_spacer2 = st.beta_columns((.1, 3.2, .1))

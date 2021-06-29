@@ -285,7 +285,15 @@ with row7_1, _lock:
         data_cut['Avg Orders']= data_cut['Total Orders']/data_cut['Counts']
         data_cut['Avg Spend Last12m']= data_cut['Total Spend Last12m']/data_cut['Counts']
         data_cut['ATV']= data_cut['Total Spend']/data_cut['Total Orders']
-        data_cut = data_cut.round(2)
+        data_cut = data_cut.round({'Counts': 0
+                                   , 'Total Spend': 2
+                                   , 'Total Orders': 0
+                                   , 'Total Spend Last12m': 2
+                                   , 'Avg Spend': 2
+                                   , 'Avg Orders': 2
+                                   , 'Avg Spend Last12m': 2
+                                   , 'ATV': 2
+                                   })
         data_cut
         
 if st.checkbox('View Charts'):

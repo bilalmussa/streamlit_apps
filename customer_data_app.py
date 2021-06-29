@@ -430,8 +430,8 @@ with st.form(key='my_form'):
         username = st.secrets["db_username"]
         password = st.secrets["db_password"]
         msg = "\r\n".join([
-          "From:"+ fromaddr +","
-          "To:" + toaddrs +","
+          "From:"+ fromaddr ,
+          "To:" + toaddrs ,
           "Subject: New enquiry from: " + fromaddr,
           "",
           "Name: " + text_input ,

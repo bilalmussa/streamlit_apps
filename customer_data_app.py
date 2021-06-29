@@ -425,13 +425,13 @@ with st.form(key='my_form'):
     
     if submit_button==1 and text_input!="" and text_input2!="":
         fromaddr = text_input2
-        toaddrs  = 'bilalmussa@gmail.com'
+        toaddrs  = st.secrets["db_username"]
         msg = 'You have a new enquiry'
-        username = 'bilalmussa@gmail.com'
-        password = 'nncnzmveutupexbn'
+        username = st.secrets["db_username"]
+        password = st.secrets["db_password"]
         msg = "\r\n".join([
           "From:"+ fromaddr +","
-          "To: bilalmussa@gmail.com",
+          "To:" + toaddrs +","
           "Subject: New enquiry from: " + fromaddr,
           "",
           "Name: " + text_input ,
@@ -444,5 +444,3 @@ with st.form(key='my_form'):
         server.login(username,password)
         server.sendmail(fromaddr, toaddrs, msg)
         server.quit()
-    
-    

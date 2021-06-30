@@ -39,13 +39,13 @@ row0_1.title('Analyse your customer data')
 #row0_1.write('')
 row0_2.subheader('https://www.linkedin.com/in/bilalmussa/ ')
 
-row1_spacer1, row1_1, row1_spacer2 = st.beta_columns((.1, 3.2, .1))
+row1_spacer1, row1_1, row1_spacer2 = st.beta_columns((.1, 30, .1))
 
 with row1_1:
     st.markdown("Hello, this is Bilal, and welcome to my Quick Analysis app. We just need 4 columns from your transactional data for (ideally) the last 3 years, and the app will automaically profile your customers and will display various statistics and charts for your analysis.")
     st.markdown("The system reads the data, analyses it, and displays the results. No data is stored during the process.")
  
-row2_spacer1, row2_1, row2_spacer2 = st.beta_columns((.1, 3.2, .1))
+row2_spacer1, row2_1, row2_spacer2 = st.beta_columns((.1, 30, .1))
 with row2_1:
     st.write("We accept the data in a CSV format with the following column headers:")
     st.write("- OrderDateTime: Date and Time of the order in DD/MM/YYYY format")
@@ -62,7 +62,7 @@ example_dict = {'OrderDateTime': ['31/05/2021','29/05/2021','05/05/2021'],
 example_data = pd.DataFrame(example_dict)
 example_data.name = 'example_data'
 
-row3_spacer1, row3_1, row3_spacer2 = st.beta_columns((.1, 3.2, .1))
+row3_spacer1, row3_1, row3_spacer2 = st.beta_columns((.1, 30, .1))
 with row3_1:
     example_data
     st.markdown(get_table_download_link_csv(example_data,"Click here to download a sample CSV template"), unsafe_allow_html=True)
@@ -79,11 +79,11 @@ def tidy_data(data):
     return data
 
 
-row4_spacer1, row4_1, row4_spacer2 = st.beta_columns((.1, 3.2, .1))
+row4_spacer1, row4_1, row4_spacer2 = st.beta_columns((.1, 30, .1))
 with row4_1:
     user_input = st.file_uploader("Upload CSV",type=['csv'])
 
-row5_spacer1, row5_1, row5_spacer2 = st.beta_columns((.1, 3.2, .1))
+row5_spacer1, row5_1, row5_spacer2 = st.beta_columns((.1, 30, .1))
 with row5_1:
     # Create a text element and let the reader know the data is loading.
     if not user_input:
@@ -99,12 +99,14 @@ max_date = trans_data['OrderDate'].max()
 last_year = (datetime.strptime(str(trans_data['OrderDate'].max()),"%Y-%m-%d")+ timedelta(days=-365)).date()
 last_year_1 = (datetime.strptime(str(trans_data['OrderDate'].max()),"%Y-%m-%d")+ timedelta(days=-730)).date()
 
-row6_spacer1, row6_1, row6_spacer2 = st.beta_columns((.1, 3.2, .1))
+row6_spacer1, row6_1, row6_spacer2 = st.beta_columns((.1, 30, .1))
 with row6_1:
-    if st.checkbox('View Raw Data'):
+    exp_raw_data = st.beta_expander(label='View Raw Data')
+    with exp_raw_data:
         st.subheader('Raw data')
         st.write(trans_data)
-    if st.checkbox('View Statistics'):
+    exp_stats = st.beta_expander(label='View Statistics')
+    with exp_stats:
         st.subheader('Data stats')
         st.write('There are ', len(trans_data), ' records in the data where you have ', trans_data['CustomerID'].nunique(), ' customers. The latest order date is', max_date, 'Below is a summary of the data - item cost field only.')
         data_description = trans_data['ItemCost'].agg(['count','mean', 'sum', 'min', 'max','median']).reset_index()
@@ -250,20 +252,10 @@ def data_calcs(trans_data):
 agg_data = data_calcs(trans_data)
 
 #%% charts for analysis
-
-#width = st.sidebar.slider("plot width", 1, 25, 3)
-#height = st.sidebar.slider("plot height", 1, 25, 1)
-
-#fig, ax = plt.subplots(figsize=(width, height)) #solved by add this line 
-#ax = agg_data[agg_data['CustomerID']!=0][['LoyaltyBand']].value_counts().sort_index().plot.bar()
-
-#st.subheader('Number of customers by loyalty band')
-#plt.show()
-#st.pyplot(fig)
-
-row7_spacer1, row7_1,row7_spacer2 = st.beta_columns((.1, 3.2, .1))
+row7_spacer1, row7_1,row7_spacer2 = st.beta_columns((.1, 30, .1))
 with row7_1, _lock:
-    if st.checkbox('View Data Cuts'):
+    exp_data_cuts = st.beta_expander(label='View Data Cuts')
+    with exp_data_cuts:
         option = st.selectbox(
          'Which field would you like to cut the data by?',
          ('LoyaltyBand', 'TotalSpendBand', 'CustStatus','Last12mSpendBand','AvgTimepOrderBand','ATVBand'))
@@ -294,11 +286,12 @@ with row7_1, _lock:
                                    , 'Avg Spend Last12m': 2
                                    , 'ATV': 2
                                    })
-        data_cut
-        
-if st.checkbox('View Charts'):
+        st.dataframe(data_cut,width=1600)
+
+exp_charts = st.beta_expander(label='View Charts')
+with exp_charts:
+    row9_spacer1, row9_1, row9_2, row9_spacer2 = st.beta_columns((.1, 3.2,3.2, 0.1))       
     st.header('Below are charts of each metric by the selected dimension')
-    row9_spacer1, row9_1, row9_2, row9_spacer2 = st.beta_columns((.1, 3.2,3.2, 0.1))
     with row9_1, _lock:
         st.subheader('Count of customers by '+ option)
         fig = Figure()
@@ -405,9 +398,10 @@ if st.checkbox('View Charts'):
     
 #%% final aggregated dataset
 
-row13_spacer1, row13_1, row13_spacer2 = st.beta_columns((0.1, 3.2, .1))
+row13_spacer1, row13_1, row13_spacer2 = st.beta_columns((0.1, 30 , .1))
 with row13_1:
-    if st.checkbox('View Aggregated Data Set'):
+    exp_agg_data = st.beta_expander(label='View Aggregated Data Set')
+    with exp_agg_data :
         st.subheader('Aggregated data')
         st.write(agg_data)
 

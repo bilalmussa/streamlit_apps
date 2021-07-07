@@ -154,11 +154,11 @@ def data_calcs(trans_data):
     
     agg_data['CustStatus'] = np.select(condlist, choicelist, default='unknown')
     
-    condlist = [(agg_data.TotalDonations>1)&(agg_data.AvgTimePDonation<=7),            
-                (agg_data.TotalDonations>1)&(agg_data.AvgTimePDonation<=30),
-                (agg_data.TotalDonations>1)&(agg_data.AvgTimePDonation<=180),
-                (agg_data.TotalDonations>1)&(agg_data.AvgTimePDonation<=365),
-                (agg_data.TotalDonations>1)&(agg_data.AvgTimePDonation>365),
+    condlist = [(agg_data.TotalOrders>1)&(agg_data.AvgTimePOrder<=7),            
+                (agg_data.TotalOrders>1)&(agg_data.AvgTimePOrder<=30),
+                (agg_data.TotalOrders>1)&(agg_data.AvgTimePOrder<=180),
+                (agg_data.TotalOrders>1)&(agg_data.AvgTimePOrder<=365),
+                (agg_data.TotalOrders>1)&(agg_data.AvgTimePOrder>365),
                 ]
     
     choicelist = ['1. Weekly'

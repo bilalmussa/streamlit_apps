@@ -238,7 +238,7 @@ def data_calcs(trans_data):
     #%% create column for last 12m spend
     condlist = [(agg_data.Spend12m<250),            
                 (agg_data.Spend12m<1000),
-                (agg_data.Spend12m>1000),            
+                (agg_data.Spend12m>=1000),            
                 ]
     
     choicelist = ['1. < £250'
